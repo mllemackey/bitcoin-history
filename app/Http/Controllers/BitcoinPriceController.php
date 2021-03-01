@@ -21,9 +21,10 @@ class BitcoinPriceController extends Controller
         $response = Http::get('https://api.coindesk.com/v1/bpi/historical/close.json', [
             'start' => $request->get('start'),
             'end' => $request->get('end')
-        ])->json();
+        ]);
+        $response->throw();
 
-        return response($response['bpi']);
+        return response($response->json()['bpi']);
     }
 
 }
