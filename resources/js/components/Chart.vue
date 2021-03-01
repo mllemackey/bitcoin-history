@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="form">
-            <input type="date" id="start" name="trip-start"
-                   :value="startDate">
-            <input type="date" id="end" name="trip-end"
-                   :value="endDate">
-            <button @click="renderChart( ['2019-08-27', '2019-08-30', '2019-09-01'], [20, 40, 10])">Render</button>
+            <input type="date" id="start" name="start"
+                   v-model="startDate">
+            <input type="date" id="end" name="end"
+                   v-model="endDate">
+            <button @click="getPrice(startDate, endDate)">Render</button>
         </div>
         <canvas id="chart"></canvas>
     </div>
@@ -34,7 +34,7 @@ export default {
                         lineTension: 0,
                         fill: false,
                         borderColor: 'rgb(27, 50, 128)',
-                        steppedLine: false,
+
                     }]
                 },
                 options: {
@@ -58,10 +58,23 @@ export default {
                     }
                 }
             });
+        },
+        getPrice(start, end) {
+            let d, l
+            let self = this;
+            axios.post('/bitcoin-price', {
+                start: start,
+                end: end
+            })
+                .then(function (response) {
+                    l = Object.keys(response.data).map(key => key)
+                    d = Object.keys(response.data).map(key => response.data[key])
+                    self.renderChart(l, d)
+                })
         }
     },
     mounted() {
-        this.renderChart(['2019-08-27', '2019-08-30', '2019-09-01'], [20, 40, 10]);
+        this.getPrice(this.startDate, this.endDate)
     }
 }
 </script>
